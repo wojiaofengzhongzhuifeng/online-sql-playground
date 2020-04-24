@@ -21,20 +21,37 @@ function App() {
     insertData();
   }, [1]);
 
-  const insertData = ()=>{
+  const insertStudentsData = ()=>{
     alasql("CREATE TABLE students (key string, name string, score number, sex string)");
     alasql(`insert into students values ('1', '小明', 90, 'male'), ('2', '小红', 91, 'female'), ('3', '小白', 92, 'male')`);
+  };
+
+  const insertClassesData = ()=>{
+    alasql(`CREATE TABLE classes (key string, name string)`);
+    alasql(`insert into classes values ('1', '一班'), ('2', ' 二班')`);
+  };
+
+  const insertData = ()=>{
+    insertStudentsData();
+    insertClassesData();
+  };
+
+  const setDataToTable = (dataSource)=>{
+    let columns = computeTableColumnData(dataSource[0]);
+    setTableColumn(columns);
+    setTableDataSource(dataSource);
   };
 
   const handleExecuteSQL = ()=>{
     try{
       let dataSource = alasql(SQLValue);
-      let columns = computeTableColumnData(dataSource[0]);
-
-      setTableColumn(columns);
-      setTableDataSource(dataSource);
+      if(dataSource instanceof Object){
+        setDataToTable(dataSource);
+      } else {
+        alert(`sql 语法成功`);
+      }
     }catch (e) {
-      alert('sql语法错误')
+      alert(`sql语法错误(${e})`);
     }
   };
 
